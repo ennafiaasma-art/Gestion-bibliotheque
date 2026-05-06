@@ -25,6 +25,10 @@ class Library {
         if ($book && $book['isAvailable']=== 'Disponible'){
             $update = $this->db->prepare("UPDATE books SET isAvailable = 'Emprunte' WHERE isbn = ?");
             $update->execute([$isbn]);
+            $loan = $this->db->prepare("INSERT INTO emprunts (member_id, id_book, dateReturn) VALUES (?,?,DATE_ADD(NOW(), INTERVAL 14 DAY))");
+            return $loan->execute([$memberId, $isbn]);
         }
+        return false;
     }
+    
 }
