@@ -18,6 +18,8 @@ class Library {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     public function borrowBook($memberId, $isbn){
-        
+        $check = $this->db->prepare("SELECT isAvialable FROM books WHERE isbn = ?");
+        $check->execute([$isbn]);
+        $book = $check->fetch();
     }
 }
