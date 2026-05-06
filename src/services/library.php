@@ -21,5 +21,10 @@ class Library {
         $check = $this->db->prepare("SELECT isAvialable FROM books WHERE isbn = ?");
         $check->execute([$isbn]);
         $book = $check->fetch();
+
+        if ($book && $book['isAvailable']=== 'Disponible'){
+            $update = $this->db->prepare("UPDATE books SET isAvailable = 'Emprunte' WHERE isbn = ?");
+            $update->execute([$isbn]);
+        }
     }
 }
