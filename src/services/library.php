@@ -17,4 +17,7 @@ class Library {
         $stmt ->execute(['query'=> "%$query%"]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    public function borrowBook($memberId, $isbn){
+        
+    }
 }
