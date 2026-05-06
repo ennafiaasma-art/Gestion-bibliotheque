@@ -10,4 +10,8 @@ class Library {
     public function _ _construct($dbConnection){
         $this->db = $dbConnection;
     }
+
+    public function searchBook($query){
+       
+    }
 }
