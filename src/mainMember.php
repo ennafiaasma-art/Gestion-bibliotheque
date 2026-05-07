@@ -14,5 +14,7 @@ print_r($library->searchBook("Petit"));
 
 if($library->borrowBook(2,'978-0123')){
     echo "Livre emprunte avec succes!\n";
-    
+
 }
+echo "---Mes Livres Empruntes---\n";
+print_r($library->getMemberLoans(2));
