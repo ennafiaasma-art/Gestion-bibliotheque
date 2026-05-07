@@ -5,16 +5,26 @@ class Env {
     public static function load($path) {
 
         if (!file_exists($path)) {
-            echo(".env file not found");
+            die(".env file not found");
         }
 
         $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
         foreach ($lines as $line) {
 
-            list($key, $value) = explode("=", $line, 2);
+            if (str_starts_with(trim($line), '#')) {
+                continue;
+            }
 
-            $_ENV[trim($key)] = trim($value);
+            [$key, $value] = explode("=", $line, 2);
+
+            $key = trim($key);
+            $value = trim($value);
+
+            // supprimer guillemets
+            $value = trim($value, "\"'");
+
+            $_ENV[$key] = $value;
         }
     }
 }

@@ -1,7 +1,5 @@
 <?php
 
-include "/src/Db.php";
-
 class Book {
 
     private string $title;
