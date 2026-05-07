@@ -37,4 +37,13 @@ class Library {
         $delete = $this->db->prepare("DELETE FROM emprunts WHERE id_book = ?");
         return $delete->execute([$isbn]);
     }
+    public function getMemberLoans($memberId){
+        $sql = "SELECT b.title, b.isbn, e.dateReturn
+        FROM books b
+        JOIN emprunts e ON b.isbn = e.id_book
+        WHERE e.member_id = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$memberId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
