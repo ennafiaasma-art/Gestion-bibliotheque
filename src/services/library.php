@@ -30,5 +30,11 @@ class Library {
         }
         return false;
     }
-    
+    public function returnBook($isbn){
+        $update = $this->db->prepare("UPDATE books SET isAvailable ='Disponible' WHERE isbn = ?");
+        $update->execute([$isbn]);
+
+        $delete = $this->db->prepare("DELETE FROM emprunts WHERE id_book = ?");
+        return $delete->execute([$isbn]);
+    }
 }
