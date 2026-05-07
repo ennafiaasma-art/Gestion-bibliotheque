@@ -5,7 +5,7 @@ require_once __DIR__ . "/../Entities/Member.php";
 
 class Library {
 
-    private $db;
+    private PDO $db;
 
     public function __construct() {
         $database = new Db();
@@ -13,30 +13,46 @@ class Library {
     }
 
     // Ajouter un livre
-    public function addBook($title, $author, $year) {
+    public function addBook(
+        string $title,
+        string $author,
+        string $isbn,
+        string $isAvailable = "Yes"
+    ) {
 
         try {
 
-            $sql = "INSERT INTO books (title, author, year)
-                    VALUES (:title, :author, :year)";
+            $sql = "INSERT INTO books (
+                        title,
+                        author,
+                        isbn,
+                        isAvailable
+                    )
+                    VALUES (
+                        :title,
+                        :author,
+                        :isbn,
+                        :isAvailable
+                    )";
 
             $stmt = $this->db->prepare($sql);
 
             $stmt->bindParam(':title', $title);
             $stmt->bindParam(':author', $author);
-            $stmt->bindParam(':year', $year);
+            $stmt->bindParam(':isbn', $isbn);
+            $stmt->bindParam(':isAvailable', $isAvailable);
 
             $stmt->execute();
 
-            return "Livre ajouté avec succès";
+            return "Livre ajoute avec succes";
 
         } catch (PDOException $e) {
 
-            return "Erreur: " . $e->getMessage();
+            return "Erreur : " . $e->getMessage();
         }
     }
 
-    // Ajouter un membre
+    // Ajouter membre
     public function addMember(Member $member): string {
 
         try {
@@ -46,23 +62,51 @@ class Library {
 
             $stmt = $this->db->prepare($sql);
 
-            $name = $member->getName();
-            $email = $member->getEmail();
-            $type = $member->getType();
-
-            $stmt->bindParam(':name', $name);
-            $stmt->bindParam(':email', $email);
-            $stmt->bindParam(':type', $type);
+            $stmt->bindValue(':name', $member->getName());
+            $stmt->bindValue(':email', $member->getEmail());
+            $stmt->bindValue(':type', $member->getType());
 
             $stmt->execute();
 
-            return "Membre ajouté avec succès";
+            return "Membre ajoute avec succes";
 
         } catch (PDOException $e) {
 
             return "Erreur : " . $e->getMessage();
         }
     }
-}
 
+    // Afficher livres
+    public function showBooks() {
+
+        try {
+
+            $sql = "SELECT * FROM books";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+
+            $books = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            if (empty($books)) {
+                echo "Aucun livre trouve\n";
+                return;
+            }
+
+            foreach ($books as $book) {
+
+                echo "ID : " . $book['id'] . PHP_EOL;
+                echo "Titre : " . $book['title'] . PHP_EOL;
+                echo "Auteur : " . $book['author'] . PHP_EOL;
+                echo "ISBN : " . $book['isbn'] . PHP_EOL;
+                echo "Disponible : " . $book['isAvailable'] . PHP_EOL;
+
+                echo "----------------------\n";
+            }
+
+        } catch (PDOException $e) {
+
+            echo "Erreur : " . $e->getMessage();
+        }
+    }
+}
 ?>

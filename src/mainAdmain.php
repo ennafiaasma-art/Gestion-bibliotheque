@@ -1,8 +1,8 @@
 <?php
 
 require_once "services/Library.php";
-require_once "./Entities/Book.php";
-require_once "./Entities/Member.php";
+require_once "Entities/Book.php";
+require_once "Entities/Member.php";
 
 $library = new Library();
 
@@ -27,17 +27,21 @@ switch ($choice) {
             $title,
             $author,
             $isbn,
-            1,
-            true
+            "Yes"   // isAvailable = Yes par défaut
         );
 
-        echo "Livre ajouté avec succès\n";
+        echo $library->addBook(
+            $book->getTitle(),
+            $book->getAuthor(),
+            $book->getIsbn(),
+            $book->getIsAvailable()
+        );
 
         break;
 
     case 2:
 
-        echo "Afficher les livres...\n";
+        $library->showBooks();
 
         break;
 

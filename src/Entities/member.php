@@ -1,22 +1,22 @@
 <?php
 
-class Member {
+require_once "User.php";
+
+class Member extends User {
 
     private int $memberId;
-    private string $name;
-    private string $email;
     private string $type;
 
     public function __construct(
-        int $memberId,
         string $name,
         string $email,
-        string $type
+        string $type,
+        int $memberId = 0
     ) {
 
+        parent::__construct($name, $email);
+
         $this->memberId = $memberId;
-        $this->name = $name;
-        $this->email = $email;
         $this->type = $type;
     }
 
@@ -24,17 +24,8 @@ class Member {
         return $this->memberId;
     }
 
-    public function getName(): string {
-        return $this->name;
-    }
-
-    public function getEmail(): string {
-        return $this->email;
-    }
-
     public function getType(): string {
         return $this->type;
     }
 }
-
 ?>

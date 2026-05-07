@@ -5,20 +5,18 @@ class Book {
     private string $title;
     private string $author;
     private string $isbn;
-    private bool $isAvailable;
-    private int $id_library;
+    private string $isAvailable;
 
     public function __construct(
         string $title,
         string $author,
         string $isbn,
-        int $id_library,
-        bool $isAvailable
+        string $isAvailable = "Yes"
     ) {
+
         $this->title = $title;
         $this->author = $author;
         $this->isbn = $isbn;
-        $this->id_library = $id_library;
         $this->isAvailable = $isAvailable;
     }
 
@@ -34,13 +32,8 @@ class Book {
         return $this->isbn;
     }
 
-    public function getIdLibrary(): int {
-        return $this->id_library;
-    }
-
-    public function getIsAvailable(): bool {
+    public function getIsAvailable(): string {
         return $this->isAvailable;
     }
 }
-
 ?>
