@@ -7,3 +7,8 @@ try{
 }catch(PDOException $e){
     die("Error: ". $e->getMessage());
 }
+$library = new \LibCore\services\librsry($pdo);
+
+echo"---Recherche de 'Petit'---\n";
+print_r($library->searchBook("Petit"));
+
