@@ -1,5 +1,5 @@
 <?php
-namespace LibCore\Services;
+namespace LibCore\services;
 
 use PDO;
 use PDOException;
