@@ -7,7 +7,7 @@ use PDOException;
 class Library {
     private $db;
 
-    public function _ _construct($dbConnection){
+    public function __construct($dbConnection){
         $this->db = $dbConnection;
     }
 
@@ -15,15 +15,15 @@ class Library {
         $sql = "SELECT * FROM books WHERE title LIKE :query OR author LIKE :query";
         $stmt = $this->db->prepare($sql);
         $stmt ->execute(['query'=> "%$query%"]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
     public function borrowBook($memberId, $isbn){
         $check = $this->db->prepare("SELECT isAvialable FROM books WHERE isbn = ?");
         $check->execute([$isbn]);
         $book = $check->fetch();
 
-        if ($book && $book['isAvailable']=== 'Disponible'){
-            $update = $this->db->prepare("UPDATE books SET isAvailable = 'Emprunte' WHERE isbn = ?");
+        if ($book && $book['isAvialable']=== 'Disponible'){
+            $update = $this->db->prepare("UPDATE books SET isAvialable = 'Emprunte' WHERE isbn = ?");
             $update->execute([$isbn]);
             $loan = $this->db->prepare("INSERT INTO emprunts (member_id, id_book, dateReturn) VALUES (?,?,DATE_ADD(NOW(), INTERVAL 14 DAY))");
             return $loan->execute([$memberId, $isbn]);
@@ -31,7 +31,7 @@ class Library {
         return false;
     }
     public function returnBook($isbn){
-        $update = $this->db->prepare("UPDATE books SET isAvailable ='Disponible' WHERE isbn = ?");
+        $update = $this->db->prepare("UPDATE books SET isAvialable ='Disponible' WHERE isbn = ?");
         $update->execute([$isbn]);
 
         $delete = $this->db->prepare("DELETE FROM emprunts WHERE id_book = ?");
@@ -44,6 +44,6 @@ class Library {
         WHERE e.member_id = ?";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$memberId]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
 }
