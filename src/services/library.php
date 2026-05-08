@@ -1,49 +1,112 @@
 <?php
-namespace LibCore\services;
 
-use PDO;
-use PDOException;
+require_once __DIR__ . "/../Connection.php";
+require_once __DIR__ . "/../Entities/Member.php";
 
 class Library {
-    private $db;
 
-    public function __construct($dbConnection){
-        $this->db = $dbConnection;
+    private PDO $db;
+
+    public function __construct() {
+        $database = new Db();
+        $this->db = $database->connect();
     }
 
-    public function searchBook($query){
-        $sql = "SELECT * FROM books WHERE title LIKE :query OR author LIKE :query";
-        $stmt = $this->db->prepare($sql);
-        $stmt ->execute(['query'=> "%$query%"]);
-        return $stmt->fetchAll(PDO::FETCH_OBJ);
-    }
-    public function borrowBook($memberId, $isbn){
-        $check = $this->db->prepare("SELECT isAvailable FROM books WHERE isbn = ?");
-        $check->execute([$isbn]);
-        $book = $check->fetch();
+    // Ajouter un livre
+    public function addBook(
+        string $title,
+        string $author,
+        string $isbn,
+        string $isAvailable = "Yes"
+    ) {
 
-        if ($book && $book['isAvialable']=== 'Disponible'){
-            $update = $this->db->prepare("UPDATE books SET isAvailable = 'Emprunte' WHERE isbn = ?");
-            $update->execute([$isbn]);
-            $loan = $this->db->prepare("INSERT INTO emprunts (member_id, id_book, dateReturn) VALUES (?,?,DATE_ADD(NOW(), INTERVAL 14 DAY))");
-            return $loan->execute([$memberId, $isbn]);
+        try {
+
+            $sql = "INSERT INTO books (
+                        title,
+                        author,
+                        isbn,
+                        isAvailable
+                    )
+                    VALUES (
+                        :title,
+                        :author,
+                        :isbn,
+                        :isAvailable
+                    )";
+
+            $stmt = $this->db->prepare($sql);
+
+            $stmt->bindParam(':title', $title);
+            $stmt->bindParam(':author', $author);
+            $stmt->bindParam(':isbn', $isbn);
+            $stmt->bindParam(':isAvailable', $isAvailable);
+
+            $stmt->execute();
+
+            return "Livre ajoute avec succes";
+
+        } catch (PDOException $e) {
+
+            return "Erreur : " . $e->getMessage();
         }
-        return false;
     }
-    public function returnBook($isbn){
-        $update = $this->db->prepare("UPDATE books SET isAvailable ='Disponible' WHERE isbn = ?");
-        $update->execute([$isbn]);
 
-        $delete = $this->db->prepare("DELETE FROM emprunts WHERE id_book = ?");
-        return $delete->execute([$isbn]);
+    // Ajouter membre
+    public function addMember(Member $member): string {
+
+        try {
+
+            $sql = "INSERT INTO members (name, email, type)
+                    VALUES (:name, :email, :type)";
+
+            $stmt = $this->db->prepare($sql);
+
+            $stmt->bindValue(':name', $member->getName());
+            $stmt->bindValue(':email', $member->getEmail());
+            $stmt->bindValue(':type', $member->getType());
+
+            $stmt->execute();
+
+            return "Membre ajoute avec succes";
+
+        } catch (PDOException $e) {
+
+            return "Erreur : " . $e->getMessage();
+        }
     }
-    public function getMemberLoans($memberId){
-        $sql = "SELECT b.title, b.isbn, e.dateReturn
-        FROM books b
-        JOIN emprunts e ON b.isbn = e.id_book
-        WHERE e.member_id = ?";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([$memberId]);
-        return $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    // Afficher livres
+    public function showBooks() {
+
+        try {
+
+            $sql = "SELECT * FROM books";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+
+            $books = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            if (empty($books)) {
+                echo "Aucun livre trouve\n";
+                return;
+            }
+
+            foreach ($books as $book) {
+
+                echo "ID : " . $book['id'] . PHP_EOL;
+                echo "Titre : " . $book['title'] . PHP_EOL;
+                echo "Auteur : " . $book['author'] . PHP_EOL;
+                echo "ISBN : " . $book['isbn'] . PHP_EOL;
+                echo "Disponible : " . $book['isAvailable'] . PHP_EOL;
+
+                echo "----------------------\n";
+            }
+
+        } catch (PDOException $e) {
+
+            echo "Erreur : " . $e->getMessage();
+        }
     }
 }
+?>
