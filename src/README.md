@@ -39,3 +39,4 @@ LibCore/
 ├── mainMember.php      # Point d'entrée Membre (Interface Interactive)
 ├── docs/               # Modélisation UML & ERD
 └── .env                # Configuration de la base de données
+
