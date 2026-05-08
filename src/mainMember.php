@@ -1,5 +1,5 @@
 <?php
-require_once 'src/services/library.php';
+require_once 'services/library.php';
 
 try {
     $pdo = new PDO("mysql:host=localhost;dbname=libcore", "root", "");
@@ -16,10 +16,10 @@ $idMembre = readline("Veuillez entrer votre ID membre : ");
 
 while (true) {
     echo "\nQue souhaitez-vous faire ?\n";
-    echo "1. Rechercher un livre (US5)\n";
-    echo "2. Emprunter un livre (US6)\n";
-    echo "3. Rendre un livre (US7)\n";
-    echo "4. Voir mes emprunts (US8)\n";
+    echo "1. Rechercher un livre \n";
+    echo "2. Emprunter un livre \n";
+    echo "3. Rendre un livre \n";
+    echo "4. Voir mes emprunts \n";
     echo "5. Quitter\n";
     
     $choix = readline("Votre choix : ");
